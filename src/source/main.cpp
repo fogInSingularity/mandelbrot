@@ -1,5 +1,6 @@
 #include "mandelbrot.h"
 #include "graphics_cfg.h"
+#include <stdio.h>
 
 int main(const int argc, const char** argv) {
     using MError = Mandelbrot::Error;
@@ -28,6 +29,7 @@ int main(const int argc, const char** argv) {
 
         Mandelbrot::Compute(pixel_buf);
         Mandelbrot::Render(window, pixel_buf.pixels);
+        // getchar();
     }
 
     Mandelbrot::TearDown(pixel_buf);

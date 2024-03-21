@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
-static const unsigned int kWindowWidth = 1024;
-static const unsigned int kWindowHight = 512;
+static const unsigned int kWindowWidth = 1920;
+static const unsigned int kWindowHight = 1080;
 static const char* kWindowTitle [[maybe_unused]] = "Mandelbrot!" ;
-
 
 #endif // GRAPHICS_CFG_H_

@@ -26,14 +26,19 @@ float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,$\
 object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,$\
 undefined,unreachable,vla-bound,vptr
 
+# NO_ASAN_FLAGS = 
+
 # FLAGS_CLANG = -Wall -Wextra -std=c11
 # LIBRARIES = -lm
 
-O_LEVEL = -Og
+O_LEVEL = -O2
 SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+MARCH = -march=znver1
+
+FLAGS = $(FLAGS_GCC) $(NO_ASAN_FLAGS) $(O_LEVEL) $(SFML_FLAGS) $(MARCH)
 
 all:
-	@$(CXX) $(INCLUDE) $(SOURCES) $(FLAGS_GCC) $(ASAN_FLAGS) $(O_LEVEL) $(SFML_FLAGS) -o $(EXE) 
+	@$(CXX) $(INCLUDE) $(SOURCES) $(FLAGS) -o $(EXE) 
 
 analyze:
 	@clang-tidy $(SOURCES) -checks=clang-analyzer-*,performance-*

@@ -1,9 +1,12 @@
 #ifndef MANDELBROT_H_
 #define MANDELBROT_H_
 
-#include <cstddef>
-#include <cstdio>
-#include <cassert>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <assert.h>
+
+#include <xmmintrin.h> // simd
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics.hpp>
@@ -26,6 +29,5 @@ namespace Mandelbrot {
     void Compute(PixelBuf& pixel_buf);
     void Render(sf::RenderWindow& window, const sf::Uint8* pixels);
 }
-
 
 #endif // MANDELBROT_H_
