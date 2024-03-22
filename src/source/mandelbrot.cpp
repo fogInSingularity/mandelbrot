@@ -7,42 +7,47 @@ static uint8_t CheckPixel(float real, float imag);
 
 // global ---------------------------------------------------------------------
 
-Mandelbrot::Error Mandelbrot::SetUp(PixelBuf &pixel_buf) {
-    pixel_buf.n_pixels = 4 * kWindowWidth * kWindowHight;
-    pixel_buf.pixels = (sf::Uint8*)calloc(pixel_buf.n_pixels, sizeof(sf::Uint8));
-    if (pixel_buf.pixels == nullptr) {
+Mandelbrot::Error Mandelbrot::SetUp(MSet& m_set) {
+    m_set.n_pixels = 4 * kWindowWidth * kWindowHight;
+    m_set.pixels = (sf::Uint8*)calloc(m_set.n_pixels, sizeof(sf::Uint8));
+    if (m_set.pixels == nullptr) {
         return Error::kBadAlloc;
     }
+
+    m_set.move_x = 0.0f;
+    m_set.move_y = 0.0f;
+    m_set.scale  = 1.0f;
 
     return Error::kOk;
 }
 
-void Mandelbrot::TearDown(PixelBuf &pixel_buf) {
-    pixel_buf.n_pixels = 0;
-    free(pixel_buf.pixels);
+void Mandelbrot::TearDown(MSet& m_set) {
+    m_set.move_x = 0.0f;
+    m_set.move_y = 0.0f;
+    m_set.scale  = 0.0f;
+    m_set.n_pixels = 0;
+    free(m_set.pixels);
 }
 
-void Mandelbrot::Compute(PixelBuf &pixel_buf) {
-    for (int32_t y = 0; y < kWindowHight; y++) {
-        for (int32_t x = 0; x < kWindowWidth; x++) {  
-            float real = ((x - (int32_t)kWindowWidth / 2.0f) * 4.0f) / kWindowWidth;
-            float imag = ((y - (int32_t)kWindowHight / 2.0f) * 4.0f)  / kWindowHight;
+void Mandelbrot::Compute(MSet& m_set) {
+    for (int32_t y = 0; y < (int32_t)kWindowHight; y++) {
+        for (int32_t x = 0; x < (int32_t)kWindowWidth; x++) {  
+            float real = (((float)x - (float)kWindowWidth / 2.0f) * 4.0f) / ((kWindowWidth + kWindowHight) / 2);
+            float imag = (((float)y - (float)kWindowHight / 2.0f) * 4.0f) / ((kWindowHight + kWindowWidth) / 2);
             
             uint8_t grad = CheckPixel(real, imag);
 
-            pixel_buf.pixels[4 * (y * kWindowWidth + x)]     = grad;
-            pixel_buf.pixels[4 * (y * kWindowWidth + x) + 1] = grad;
-            pixel_buf.pixels[4 * (y * kWindowWidth + x) + 2] = grad;
-            pixel_buf.pixels[4 * (y * kWindowWidth + x) + 3] = 255;            
+            m_set.pixels[4 * (y * (int32_t)kWindowWidth + x)]     = grad;
+            m_set.pixels[4 * (y * (int32_t)kWindowWidth + x) + 1] = grad;
+            m_set.pixels[4 * (y * (int32_t)kWindowWidth + x) + 2] = grad;
+            m_set.pixels[4 * (y * (int32_t)kWindowWidth + x) + 3] = 255;            
         }
     }
 }
 
-void Mandelbrot::Render(sf::RenderWindow& window, const sf::Uint8* pixels) {
-    assert(pixels != nullptr);
-
+void Mandelbrot::Render(sf::RenderWindow& window, const MSet& m_set) {
     sf::Image image;
-    image.create(kWindowWidth, kWindowHight, pixels);
+    image.create(kWindowWidth, kWindowHight, m_set.pixels);
 
     sf::Texture texture;
     texture.loadFromImage(image);
@@ -58,16 +63,16 @@ void Mandelbrot::Render(sf::RenderWindow& window, const sf::Uint8* pixels) {
 // static ---------------------------------------------------------------------
 
 static uint8_t CheckPixel(float real, float imag) {
-    const uint64_t kMaxIter = 255;
+    const uint64_t kMaxIter = 1024;
     
-    float x = 0;
-    float y = 0;
+    float x = 0.0f;
+    float y = 0.0f;
 
     uint32_t iter = 0;
 
     while (x * x + y * y < 4.0f && iter <= kMaxIter) {
         float xtemp = x * x - y * y + real;
-        y = 2 * x * y + imag;
+        y = 2.0f * x * y + imag;
         x = xtemp;
 
         iter++;
@@ -80,3 +85,4 @@ static uint8_t CheckPixel(float real, float imag) {
     }
 }
 
+ 

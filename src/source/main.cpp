@@ -1,23 +1,23 @@
 #include "mandelbrot.h"
 #include "graphics_cfg.h"
-#include <stdio.h>
 
 int main(const int argc, const char** argv) {
     using MError = Mandelbrot::Error;
     MError m_error = MError::kOk;
     
-    Mandelbrot::PixelBuf pixel_buf;
-    m_error = Mandelbrot::SetUp(pixel_buf);
+    Mandelbrot::MSet m_set;
+    m_error = Mandelbrot::SetUp(m_set);
 
     if (m_error != MError::kOk) {
         fprintf(stderr, "# Error: bad alloc\n");
-        Mandelbrot::TearDown(pixel_buf);
+        Mandelbrot::TearDown(m_set);
         return 1;
     }
 
     sf::RenderWindow window(sf::VideoMode(kWindowWidth, 
                                           kWindowHight), 
-                            kWindowTitle);
+                            kWindowTitle,
+                            sf::Style::Fullscreen);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -27,12 +27,11 @@ int main(const int argc, const char** argv) {
             }
         }
 
-        Mandelbrot::Compute(pixel_buf);
-        Mandelbrot::Render(window, pixel_buf.pixels);
-        // getchar();
+        Mandelbrot::Compute(m_set);
+        Mandelbrot::Render(window, m_set);
     }
 
-    Mandelbrot::TearDown(pixel_buf);
+    Mandelbrot::TearDown(m_set);
 
     return 0;
 }

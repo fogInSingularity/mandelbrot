@@ -26,7 +26,7 @@ float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,$\
 object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,$\
 undefined,unreachable,vla-bound,vptr
 
-# NO_ASAN_FLAGS = 
+NO_ASAN_FLAGS = 
 
 # FLAGS_CLANG = -Wall -Wextra -std=c11
 # LIBRARIES = -lm

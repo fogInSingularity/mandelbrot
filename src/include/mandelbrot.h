@@ -18,16 +18,20 @@ namespace Mandelbrot {
         kBadAlloc = 1,
     };
 
-    struct PixelBuf {
+    struct MSet {
         sf::Uint8* pixels;
         size_t n_pixels;
+      
+        float move_x;
+        float move_y;
+        float scale;    
     };
 
-    Error SetUp(PixelBuf& pixel_buf);
-    void TearDown(PixelBuf& pixel_buf);
+    Error SetUp(MSet& m_set);
+    void TearDown(MSet& m_set);
 
-    void Compute(PixelBuf& pixel_buf);
-    void Render(sf::RenderWindow& window, const sf::Uint8* pixels);
+    void Compute(MSet& m_set);
+    void Render(sf::RenderWindow& window, const MSet& m_set);
 }
 
 #endif // MANDELBROT_H_
