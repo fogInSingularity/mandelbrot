@@ -8,8 +8,10 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 
-static const unsigned int kWindowWidth = 1920;
-static const unsigned int kWindowHight = 1080;
-static const char* kWindowTitle [[maybe_unused]] = "Mandelbrot!" ;
+#include "config.h"
+#include "mandelbrot.h"
+
+void Render(sf::RenderWindow& window, const Mandelbrot::MSet& m_set);
+void CheckWindowEvents(sf::RenderWindow& window, Mandelbrot::MSet& m_set);
 
 #endif // GRAPHICS_CFG_H_

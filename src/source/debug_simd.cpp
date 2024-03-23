@@ -1,7 +1,4 @@
 #include "debug_simd.h"
-#include <cstdint>
-#include <cstdio>
-#include <immintrin.h>
 
 void PrintYValueFloat(__m256 value) {
     float buffer[8] __attribute__((aligned(32)));

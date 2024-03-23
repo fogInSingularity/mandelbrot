@@ -1,5 +1,5 @@
 #include "mandelbrot.h"
-#include "graphics_cfg.h"
+#include "graphics.h"
 
 int main() {
     using MError = Mandelbrot::Error;
@@ -18,37 +18,10 @@ int main() {
                                           kWindowHight), 
                             kWindowTitle,
                             sf::Style::Fullscreen);
-
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            } else if (event.type == sf::Event::KeyPressed) {
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                    m_set.move_x -= 10.0f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                    m_set.move_x += 10.0f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                    m_set.move_y -= 10.0f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                    m_set.move_y += 10.0f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)) {
-                    m_set.move_y = 0.0f;
-                    m_set.move_x = 0.0f;
-                    m_set.scale  = 1.0f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-                    m_set.scale -= 0.05f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
-                    m_set.scale += 0.05f;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) { 
-                    window.close();
-                }
-            }
-        }
-
+        CheckWindowEvents(window, m_set);
         Mandelbrot::Compute(m_set);
-        Mandelbrot::Render(window, m_set);
+        Render(window, m_set);
     }
 
     Mandelbrot::TearDown(m_set);

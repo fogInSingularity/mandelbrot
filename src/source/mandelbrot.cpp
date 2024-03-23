@@ -1,11 +1,10 @@
 #include "mandelbrot.h"
 #include "bench.h"
 #include "debug_simd.h"
-#include "graphics_cfg.h"
 
 // static ---------------------------------------------------------------------
 
-static void ColorPixel(Mandelbrot::MSet& m_set, uint8_t grad, size_t pos);
+static void ColorPixel(Mandelbrot::MSet& m_set, uint8_t grad, int32_t pos);
 
 [[maybe_unused]] static void ComputeNaive(Mandelbrot::MSet& m_set);
 [[maybe_unused]] static uint8_t CheckPixelNaive(float real, float imag);
@@ -15,6 +14,8 @@ static void ColorPixel(Mandelbrot::MSet& m_set, uint8_t grad, size_t pos);
 
 [[maybe_unused]] static void ComputeSimd(Mandelbrot::MSet& m_set);
 [[maybe_unused]] static uint64_t CheckPixelSimd(__m256 real, __m256 imag);
+
+__m256i create_mask(uint8_t mask);
 
 // global ---------------------------------------------------------------------
 
@@ -37,11 +38,15 @@ void Mandelbrot::TearDown(MSet& m_set) {
     m_set.move_y = 0.0f;
     m_set.scale  = 0.0f;
     m_set.n_pixels = 0;
-    free(m_set.pixels);
+
+    if (m_set.pixels != nullptr) {
+        free(m_set.pixels);
+    }
 }
 
 void Mandelbrot::Compute(MSet& m_set) {
-    uint64_t start_time = GetTime();
+    [[maybe_unused]] uint64_t start_time = GetTime();
+
 #if defined(COMPUTE_NAIVE)
     ComputeNaive(m_set);
 #elif defined(COMPUTE_ARRAY)
@@ -49,28 +54,16 @@ void Mandelbrot::Compute(MSet& m_set) {
 #elif defined (COMPUTE_SIMD)
     ComputeSimd(m_set);
 #endif
-    uint64_t end_time = GetTime();
+
+    [[maybe_unused]] uint64_t end_time = GetTime();
+#if defined (LOG_TIME)    
     fprintf(stderr, "%lu\n", end_time - start_time);
-}
-
-void Mandelbrot::Render(sf::RenderWindow& window, const MSet& m_set) {
-    sf::Image image;
-    image.create(kWindowWidth, kWindowHight, m_set.pixels);
-
-    sf::Texture texture;
-    texture.loadFromImage(image);
-
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
-
-    window.clear();
-    window.draw(sprite);
-    window.display();
+#endif
 }
 
 // static ---------------------------------------------------------------------
 
-static void ColorPixel(Mandelbrot::MSet& m_set, uint8_t grad, size_t pos) {
+static void ColorPixel(Mandelbrot::MSet& m_set, uint8_t grad, int32_t pos) {
     m_set.pixels[4 * pos]     = grad;
     m_set.pixels[4 * pos + 1] = grad;
     m_set.pixels[4 * pos + 2] = grad;
@@ -115,7 +108,7 @@ static void ComputeArray(Mandelbrot::MSet& m_set) {
         for (int32_t x = 0; x < (int32_t)kWindowWidth; x += 4) {
             float real[4];
             float imag[4];
-            uint8_t grad[4];
+            uint8_t grad[4] __attribute__((aligned(4)));
 
             for (int32_t i = 0; i < 4; i++) {
                 real[i] = m_set.scale * (((float)(x + i) - (float)kWindowWidth / 2.0f + m_set.move_x) * 4.0f) / ((kWindowWidth + kWindowHight) / 2);
@@ -132,7 +125,7 @@ static void ComputeArray(Mandelbrot::MSet& m_set) {
 }
 
 static uint32_t CheckPixelArray(float real[4], float imag[4]) {
-    uint8_t grad[4];
+    uint8_t grad[4] __attribute__((aligned(4)));
 
     float x[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     float y[4] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -168,14 +161,14 @@ static void ComputeSimd(Mandelbrot::MSet& m_set) {
             
             for (int32_t i = 0; i < 8; i++) {
                 real_arr[i] = m_set.scale * (((float)(x + i) - (float)kWindowWidth / 2.0f + m_set.move_x) * 4.0f) / ((kWindowWidth + kWindowHight) / 2);
-                imag_arr[i] = m_set.scale * (((float)(y) - (float)kWindowHight / 2.0f + m_set.move_y) * 4.0f) / ((kWindowHight + kWindowWidth) / 2);
+                imag_arr[i] = m_set.scale * (((float)(y    ) - (float)kWindowHight / 2.0f + m_set.move_y) * 4.0f) / ((kWindowHight + kWindowWidth) / 2);
             }
 
             __m256 real = _mm256_load_ps(real_arr);
             __m256 imag = _mm256_load_ps(imag_arr);
 
             uint64_t grad = CheckPixelSimd(real, imag);
-            uint8_t grad_arr[8];
+            uint8_t grad_arr[8] __attribute__((aligned(8)));
             *(uint64_t*)grad_arr = grad;
 
             // uint8_t grad = CheckPixelNaive(real, imag);
@@ -214,7 +207,7 @@ static uint64_t CheckPixelSimd(__m256 real, __m256 imag) {
     uint32_t iter = 0;
     __m256i iter_count = _mm256_setzero_si256();
 
-    __m256i tmp_int;
+    // __m256i tmp_int;
     __m256i mask;
     __m256 tmp_flt;
 
@@ -240,10 +233,10 @@ static uint64_t CheckPixelSimd(__m256 real, __m256 imag) {
     _mm256_storeu_si256((__m256i*)stored_iter, iter_count);
 
     for (int i = 0; i < 8; i++) {
-        if (stored_iter[i] >= Mandelbrot::kMaxIter) {
+        if ((size_t)stored_iter[i] >= Mandelbrot::kMaxIter) {
             grad[i] = 255;
         } else {
-            grad[i] = (stored_iter[i] * 5)  % 255;
+            grad[i] = (uint8_t)((stored_iter[i] * 4)  % 255);
         }
     }
 

@@ -5,7 +5,7 @@ EXE = mandelbrot
 SOURCES = src/source/*
 INCLUDE = -Isrc/include/
 
-FLAGS_GCC = -std=c++17 -Wall -Wextra -Waggressive-loop-optimizations    \
+FLAGS_GCC = -std=c++17 -Wall -Wextra -Waggressive-loop-optimizations          \
 -Wmissing-declarations -Wcast-align -Wcast-qual                               \
 -Wchar-subscripts -Wconversion                                                \
 -Wempty-body -Wfloat-equal -Wformat-nonliteral -Wformat-security              \

@@ -4,20 +4,13 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <assert.h>
 
 #include <immintrin.h> // simd
 
-#include <SFML/Config.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-
-// #define COMPUTE_NAIVE 1
-// #define COMPUTE_ARRAY 1
-#define COMPUTE_SIMD 1
+#include "config.h"
 
 namespace Mandelbrot {
-    const size_t kMaxIter = 48;
+    const size_t kMaxIter = kMaxIteration;
 
     enum class Error {
         kOk       = 0,
@@ -37,7 +30,6 @@ namespace Mandelbrot {
     void TearDown(MSet& m_set);
 
     void Compute(MSet& m_set);
-    void Render(sf::RenderWindow& window, const MSet& m_set);
 }
 
 #endif // MANDELBROT_H_
