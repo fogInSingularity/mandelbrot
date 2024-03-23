@@ -6,13 +6,19 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include <xmmintrin.h> // simd
+#include <immintrin.h> // simd
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+// #define COMPUTE_NAIVE 1
+// #define COMPUTE_ARRAY 1
+#define COMPUTE_SIMD 1
+
 namespace Mandelbrot {
+    const size_t kMaxIter = 48;
+
     enum class Error {
         kOk       = 0,
         kBadAlloc = 1,

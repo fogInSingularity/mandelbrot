@@ -5,7 +5,7 @@ EXE = mandelbrot
 SOURCES = src/source/*
 INCLUDE = -Isrc/include/
 
-FLAGS_GCC = -ggdb -std=c++17 -Wall -Wextra -Waggressive-loop-optimizations    \
+FLAGS_GCC = -std=c++17 -Wall -Wextra -Waggressive-loop-optimizations    \
 -Wmissing-declarations -Wcast-align -Wcast-qual                               \
 -Wchar-subscripts -Wconversion                                                \
 -Wempty-body -Wfloat-equal -Wformat-nonliteral -Wformat-security              \
@@ -17,31 +17,28 @@ FLAGS_GCC = -ggdb -std=c++17 -Wall -Wextra -Waggressive-loop-optimizations    \
 -Wswitch-default -Wswitch-enum -Wsync-nand -Wundef -Wunreachable-code         \
 -Wunused -Wvariadic-macros                                                    \
 -Wno-missing-field-initializers -Wno-narrowing                                \
--Wno-varargs -Wstack-protector -fcheck-new                                    \
--fstack-protector -fstrict-overflow 					                      \
--fno-omit-frame-pointer -Wstack-usage=8192                                    \
+-Wno-varargs -fstack-protector-strong -fcheck-new -fstrict-overflow -Wstack-usage=8192 -Wstack-protector
 
 ASAN_FLAGS = -fsanitize=address,bool,bounds,enum,float-cast-overflow,$\
 float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,$\
 object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,$\
 undefined,unreachable,vla-bound,vptr
 
-NO_ASAN_FLAGS = 
-
-# FLAGS_CLANG = -Wall -Wextra -std=c11
-# LIBRARIES = -lm
-
 O_LEVEL = -O2
 SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 MARCH = -march=znver1
 
-FLAGS = $(FLAGS_GCC) $(NO_ASAN_FLAGS) $(O_LEVEL) $(SFML_FLAGS) $(MARCH)
+DEBUG_FLAGS = $(FLAGS_GCC) $(ASAN_FLAGS) $(O_LEVEL) $(SFML_FLAGS) $(MARCH) -g -ggdb -D_FORTIFY_SOURCE=2
+RELEASE_FLAGS = $(FLAGS_GCC) $(O_LEVEL) $(SFML_FLAGS) $(MARCH) -s -flto -DNDEBUG -fno-omit-frame-pointer
 
 all:
-	@$(CXX) $(INCLUDE) $(SOURCES) $(FLAGS) -o $(EXE) 
+	@$(CXX) $(INCLUDE) $(SOURCES) $(DEBUG_FLAGS) -o $(EXE) 
+
+release:
+	@$(CXX) $(INCLUDE) $(SOURCES) $(RELEASE_FLAGS) -o $(EXE) 
+
+asm:
+	@$(CXX) $(INCLUDE) $(SOURCES) $(RELEASE_FLAGS) -s -S
 
 analyze:
 	@clang-tidy $(SOURCES) -checks=clang-analyzer-*,performance-*
-
-# clang:
-# 	@clang $(INCLUDE) $(SOURCES) $(FLAGS_CLANG) $(LIBRARIES) -o $(EXE)
