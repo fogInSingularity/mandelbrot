@@ -24,13 +24,13 @@ void CheckWindowEvents(sf::RenderWindow& window, Mandelbrot::MSet& m_set) {
             window.close();
         } else if (event.type == sf::Event::KeyPressed) {
             if (sf::Keyboard::isKeyPressed(kButtonMoveLeft)) {
-                m_set.move_x -= 10.0f;
+                m_set.move_x -= 10.0f * m_set.scale;
             } else if (sf::Keyboard::isKeyPressed(kButtonMoveRight)) {
-                m_set.move_x += 10.0f;
+                m_set.move_x += 10.0f * m_set.scale;
             } else if (sf::Keyboard::isKeyPressed(kButtonMoveUp)) {
-                m_set.move_y -= 10.0f;
+                m_set.move_y -= 10.0f * m_set.scale;
             } else if (sf::Keyboard::isKeyPressed(kButtonMoveDown)) {
-                m_set.move_y += 10.0f;
+                m_set.move_y += 10.0f * m_set.scale;
             } else if (sf::Keyboard::isKeyPressed(kButtonDefaultView)) {
                 m_set.move_y = 0.0f;
                 m_set.move_x = 0.0f;

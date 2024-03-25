@@ -17,7 +17,7 @@ FLAGS_GCC = -std=c++17 -Wall -Wextra -Waggressive-loop-optimizations          \
 -Wswitch-default -Wswitch-enum -Wsync-nand -Wundef -Wunreachable-code         \
 -Wunused -Wvariadic-macros                                                    \
 -Wno-missing-field-initializers -Wno-narrowing                                \
--Wno-varargs -fstack-protector-strong -fcheck-new -fstrict-overflow -Wstack-usage=8192 -Wstack-protector
+-Wno-varargs -fstack-protector-strong -fcheck-new -fstrict-overflow -Wstack-usage=8192 -Wstack-protector \
 
 ASAN_FLAGS = -fsanitize=address,bool,bounds,enum,float-cast-overflow,$\
 float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,$\
@@ -28,8 +28,11 @@ O_LEVEL = -O2
 SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 MARCH = -march=znver1
 
-DEBUG_FLAGS = $(FLAGS_GCC) $(ASAN_FLAGS) $(O_LEVEL) $(SFML_FLAGS) $(MARCH) -g -ggdb -D_FORTIFY_SOURCE=2
-RELEASE_FLAGS = $(FLAGS_GCC) $(O_LEVEL) $(SFML_FLAGS) $(MARCH) -s -flto -DNDEBUG -fno-omit-frame-pointer
+PROFILE = -fprofile-use
+VEC_FLAGS = -ftree-vectorize -fopt-info-vec-optimized -fopt-info-vec-missed
+
+DEBUG_FLAGS = $(FLAGS_GCC) $(_ASAN_FLAGS) $(O_LEVEL) $(SFML_FLAGS) $(MARCH) -g -ggdb -D_FORTIFY_SOURCE=2
+RELEASE_FLAGS = $(FLAGS_GCC) $(O_LEVEL) $(SFML_FLAGS) $(MARCH) -s -flto -DNDEBUG -fno-omit-frame-pointer 
 
 all:
 	@$(CXX) $(INCLUDE) $(SOURCES) $(DEBUG_FLAGS) -o $(EXE) 

@@ -5,7 +5,7 @@ int main() {
     using MError = Mandelbrot::Error;
     MError m_error = MError::kOk;
     
-    Mandelbrot::MSet m_set;
+    Mandelbrot::MSet m_set = {};
     m_error = Mandelbrot::SetUp(m_set);
 
     if (m_error != MError::kOk) {

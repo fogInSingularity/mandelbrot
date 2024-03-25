@@ -21,7 +21,7 @@ static const sf::Keyboard::Key kButtonQuit        = sf::Keyboard::Q;
 
 // compute config -------------------------------------------------------------
 
-static const size_t kMaxIteration = 48;
+static const size_t kMaxIteration = 253;
 
 // #define COMPUTE_NAIVE 1
 // #define COMPUTE_ARRAY 1
