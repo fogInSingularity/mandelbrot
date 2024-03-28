@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <assert.h>
 
 #include <immintrin.h> // simd
 
@@ -26,10 +28,10 @@ namespace Mandelbrot {
         float scale;    
     };
 
-    Error SetUp(MSet& m_set);
-    void TearDown(MSet& m_set);
+    Error SetUp(MSet* m_set);
+    void TearDown(MSet* m_set);
 
-    void Compute(MSet& m_set);
+    void Compute(MSet* m_set);
 }
 
 #endif // MANDELBROT_H_

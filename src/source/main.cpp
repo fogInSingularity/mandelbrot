@@ -6,11 +6,12 @@ int main() {
     MError m_error = MError::kOk;
     
     Mandelbrot::MSet m_set = {};
-    m_error = Mandelbrot::SetUp(m_set);
+    m_error = Mandelbrot::SetUp(&m_set);
 
     if (m_error != MError::kOk) {
         fprintf(stderr, "# Error: bad alloc\n");
-        Mandelbrot::TearDown(m_set);
+        Mandelbrot::TearDown(&m_set);
+
         return 1;
     }
 
@@ -19,12 +20,12 @@ int main() {
                             kWindowTitle,
                             sf::Style::Fullscreen);
     while (window.isOpen()) {
-        CheckWindowEvents(window, m_set);
-        Mandelbrot::Compute(m_set);
+        CheckWindowEvents(window, &m_set);
+        Mandelbrot::Compute(&m_set);
         Render(window, m_set);
     }
 
-    Mandelbrot::TearDown(m_set);
+    Mandelbrot::TearDown(&m_set);
 
     return 0;
 }

@@ -8,7 +8,7 @@
 
 static const unsigned int kWindowWidth = 1920;
 static const unsigned int kWindowHight = 1080;
-static const char* kWindowTitle [[maybe_unused]] = "Mandelbrot!" ;
+static const char*        kWindowTitle [[maybe_unused]] = "Mandelbrot!" ;
 
 static const sf::Keyboard::Key kButtonMoveLeft    = sf::Keyboard::Left;
 static const sf::Keyboard::Key kButtonMoveRight   = sf::Keyboard::Right;
@@ -24,8 +24,8 @@ static const sf::Keyboard::Key kButtonQuit        = sf::Keyboard::Q;
 static const size_t kMaxIteration = 253;
 
 // #define COMPUTE_NAIVE 1
-// #define COMPUTE_ARRAY 1
-#define COMPUTE_SIMD 1
-// #define LOG_TIME 1
+#define COMPUTE_ARRAY 1
+// #define COMPUTE_SIMD 1
+#define LOG_TIME 1
 
 #endif // CONFIG_H_

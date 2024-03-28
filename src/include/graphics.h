@@ -12,6 +12,6 @@
 #include "mandelbrot.h"
 
 void Render(sf::RenderWindow& window, const Mandelbrot::MSet& m_set);
-void CheckWindowEvents(sf::RenderWindow& window, Mandelbrot::MSet& m_set);
+void CheckWindowEvents(sf::RenderWindow& window, Mandelbrot::MSet* m_set);
 
 #endif // GRAPHICS_CFG_H_
